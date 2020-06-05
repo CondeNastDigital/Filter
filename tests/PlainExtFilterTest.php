@@ -55,12 +55,16 @@ class PlainExtFilterTest extends PHPUnit_Framework_TestCase {
         
         $input  = "abcdefghijklmnobqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-äöüÄÖÜ-áéíóúàèìòùâêîôûÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛ_.,!\"§$%&/()=?´`<*+#'>@|~:;\\";
         $basic  = "abcdefghijklmnobqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        $simple = "_.,!()?:\\";
         $german = "äöüÄÖÜ";
         $french = "áéíóúàèìòùâêîôûÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛ";
         $all    = $basic.$german.$french;
         
         $this->Filter = new PlainExtFilter(array("characterset" => PlainExtFilter::BASIC));
         $this->assertEquals($basic, $this->Filter->filter($input), "Basic");
+
+        $this->Filter = new PlainExtFilter(array("characterset" => PlainExtFilter::SIMPLE));
+        $this->assertEquals($simple, $this->Filter->filter($input), "Simple");
 
         $this->Filter = new PlainExtFilter(array("characterset" => PlainExtFilter::GERMAN));
         $this->assertContains($german, $this->Filter->filter($input), "German");
@@ -93,5 +97,14 @@ class PlainExtFilterTest extends PHPUnit_Framework_TestCase {
         // Not a non-space
         $this->Filter = new PlainExtFilter(array("characterset" => 0, "characters" => "123\\S456"));
         $this->assertEquals("1S23456", $this->Filter->filter("1Sa2b,34-56"), "Non-space");
+
+        // Slashes
+        $this->Filter = new PlainExtFilter(array("characterset" => 0, "characters" => 'abcd\\/'));
+        $this->assertEquals("a\\\\b/c\/", $this->Filter->filter("a\\\\b/c\/e "), "Slash");
+
+        // Slashes
+        $this->Filter = new PlainExtFilter(array("characterset" => 0, "characters" => '-$%&/()=?´`<*+#\'>@|~:;'));
+        $this->assertEquals("-$%&/()=?´`<*+#''>@|~:;/", $this->Filter->filter("-§$%&/()=?´`<*+#\\'\'>@|~:;abc/"), "Special Characters");
+
     }
 }

@@ -31,7 +31,7 @@ class PlainExtFilter implements IFilterType {
     const ALL           = 15;
     
     protected static $charactersets = array(self::BASIC  => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-                                            self::SIMPLE => ",.:\\-_()?! ",
+                                            self::SIMPLE => ",.:\\\\-_()?! ",
                                             self::INTERNATIONAL => "\p{L}\p{N}");
     
     protected $defaults = array("characters" => "", "characterset" => self::INTERNATIONAL);
